@@ -32,3 +32,17 @@ function operate(operator, a, b){
     }
     return answer;
 }
+
+function updateDisplay(){
+    calcDisplay.textContent += this.getAttribute("data-value");
+    updateAns();
+}
+
+function updateAns(){
+    ans = parseInt(calcDisplay.textContent);
+}
+
+let ans = 0;
+let calcDisplay = document.querySelector(".calculator-display");
+let numberButtons = document.querySelectorAll(".number-btn");
+numberButtons.forEach(btn => btn.addEventListener('click', updateDisplay));

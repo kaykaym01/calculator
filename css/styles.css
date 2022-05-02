@@ -22,7 +22,7 @@ button {
     justify-content: space-around;
 }
 
-.display {
+.calculator-display {
     font-size: 48px;
     width: 98%;
     margin: 3px auto;
