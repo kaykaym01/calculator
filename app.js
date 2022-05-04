@@ -114,12 +114,16 @@ function operatorPressed(){
  */
 function calculate(){
     let a = ans;
-    updateAns();
-    let b = ans;
-    let answer = operate(op, a, b);
+
+    if (op && !opJustPressed){
+        updateAns();
+        let b = ans;
+        let answer = operate(op, a, b);
+        calcDisplay.textContent = answer;
+        console.log(answer);
+    }
     op = "";
-    calcDisplay.textContent = answer;
-    console.log(answer);
+    opJustPressed = true;
 }
 
 /**
