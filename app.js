@@ -101,7 +101,7 @@ function updateAns(){
  * with value of new operation.
  */
 function operatorPressed(){
-    if (op && !opJustPressed){
+    if (op && !opJustPressed && !eqJustPressed){
         calculate();
     }
 
