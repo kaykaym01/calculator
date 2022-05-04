@@ -9,12 +9,16 @@ function multiply(a,b){
 }
 
 /**
- * Returns quotient of two numbers: a,b
+ * Returns quotient of two numbers: a,b.
+ * If b is 0, returns Error;
  * @param {*} a number 1
  * @param {*} b number 2
  * @returns a / b
  */
 function divide(a,b){
+    if (b == 0){
+        return NaN;
+    }
     return a/b;
 }
 
@@ -129,7 +133,11 @@ function calculate(){
         }
         answer = operate(op, a, b);
         ans = answer;
-        calcDisplay.textContent = parseFloat(answer).toPrecision(8)/1;
+        if (isNaN(answer)){
+            calcDisplay.textContent = "Error";
+        } else {
+            calcDisplay.textContent = parseFloat(answer).toPrecision(8)/1;
+        }
         console.log(answer);
         previousOp = [op, b];
     }
