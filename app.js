@@ -61,21 +61,27 @@ function operate(operator, a, b){
         case("-"):
             answer = subtract(a,b);
             break;
+        default:
+            answer = a;
+            break;
     }
     return answer;
 }
 
 /**
  * Updates calculator display as numbers are pressed.
- * If display has 0 or is empty, number pressed replaces it.
+ * If display has 0 or is empty, number pressed replaces current display text content.
+ * If the last pressed button was an operator, number pressed replaces current display text content.
  */
-function updateDisplay(){
+function numberPressed(){
     if (calcDisplay.textContent.trim() == "" || 
-        calcDisplay.textContent.trim() == "0"){
+        calcDisplay.textContent.trim() == "0" ||
+        opJustPressed){
         calcDisplay.textContent = this.getAttribute("data-value");
     } else {
         calcDisplay.textContent += this.getAttribute("data-value");
     }
+    opJustPressed = false;
 }
 
 /**
@@ -89,12 +95,17 @@ function updateAns(){
 /**
  * When an operator (+,-,/,*) is pressed, stores the operator in variable op
  * and updates ans with what is currently in the display. Also sets display
- * to empty string.
+ * to empty string. If an operator was just pressed previously, op is replaced
+ * with value of new operation.
  */
 function operatorPressed(){
+    if (op && !opJustPressed){
+        calculate();
+    }
+
     op = this.getAttribute("data-value");
     updateAns();
-    calcDisplay.textContent = '\xa0';
+    opJustPressed = true;
 }
 
 /**
@@ -113,9 +124,10 @@ function calculate(){
 
 let ans = 0;
 let op = "";
+let opJustPressed = false;
 let calcDisplay = document.querySelector(".calculator-display");
 let numberButtons = document.querySelectorAll(".number-btn");
-numberButtons.forEach(btn => btn.addEventListener('click', updateDisplay));
+numberButtons.forEach(btn => btn.addEventListener('click', numberPressed));
 
 let operateButtons = document.querySelectorAll(".operate-btn");
 operateButtons.forEach(btn => btn.addEventListener('click', operatorPressed));
