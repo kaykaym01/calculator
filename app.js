@@ -144,6 +144,7 @@ function calculate(){
 function clear(){
     ans = 0;
     op = "";
+    previousOp = [];
     opJustPressed = false;
     calcDisplay.textContent = '\xa0';
     console.clear();
