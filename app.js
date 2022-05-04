@@ -74,23 +74,19 @@ function operate(operator, a, b){
  * If the last pressed button was an operator, number pressed replaces current display text content.
  */
 function numberPressed(){
-    if (calcDisplay.textContent.trim() == "" || 
-        calcDisplay.textContent.trim() == "0" ||
-        opJustPressed ||
-        eqJustPressed){
-        calcDisplay.textContent = this.getAttribute("data-value");
-    } else {
+    if (justPressed == "number" || justPressed == "decimal"){
         calcDisplay.textContent += this.getAttribute("data-value");
+    } else {
+        calcDisplay.textContent = this.getAttribute("data-value");
     }
-    opJustPressed = false;
-    eqJustPressed = false;
+    justPressed = "number";
 }
 
 /**
  * Takes what's in the display text content and stores in variable ans
  */
 function updateAns(){
-    ans = parseInt(calcDisplay.textContent);
+    ans = parseFloat(calcDisplay.textContent);
     console.log(ans);
 }
 
@@ -101,14 +97,15 @@ function updateAns(){
  * with value of new operation.
  */
 function operatorPressed(){
-    if (op && !opJustPressed && !eqJustPressed){
+    // only show updated calculation if previous button was not an operator or equal
+    if (op && justPressed != "operator" && justPressed != "equal"){
         calculate();
     }
 
     op = this.getAttribute("data-value");
     previousOp[0] = op;
     updateAns();
-    opJustPressed = true;
+    justPressed = "operator";
 }
 
 /**
@@ -120,8 +117,10 @@ function calculate(){
     let b;
     let answer;
 
+    // only calculate if operator is set
     if (previousOp.length){
-        if (eqJustPressed && previousOp.length == 2){
+        // repeatedly pressing equals will re-do previous operation
+        if (justPressed == "equal" && previousOp.length == 2){
             op = previousOp[0];
             b = previousOp[1];
         } else {
@@ -130,11 +129,11 @@ function calculate(){
         }
         answer = operate(op, a, b);
         ans = answer;
-        calcDisplay.textContent = answer;
+        calcDisplay.textContent = parseFloat(answer).toPrecision(8)/1;
         console.log(answer);
         previousOp = [op, b];
     }
-    eqJustPressed = true;
+    justPressed = "equal";
 }
 
 /**
@@ -145,14 +144,31 @@ function clear(){
     ans = 0;
     op = "";
     previousOp = [];
-    opJustPressed = false;
-    calcDisplay.textContent = '\xa0';
+    calcDisplay.textContent = '0';
     console.clear();
+    justPressed = "";
+}
+
+/**
+ * When decimal button is pressed, if not previously pressed, add
+ * decimal to number in display
+ */
+function decimalPressed(){
+    // to replace textcontent
+    if (justPressed != "number"){
+        calcDisplay.textContent = "0.";
+    }
+    // to add text content
+    if (!calcDisplay.textContent.includes(".")){
+        calcDisplay.textContent += ".";
+    }
+    justPressed = "decimal";
 }
 
 let ans = 0;
 let op = "";
 let previousOp = [];
+let justPressed = "";
 let opJustPressed = false;
 let eqJustPressed = false;
 let calcDisplay = document.querySelector(".calculator-display");
@@ -167,3 +183,6 @@ equalButton.addEventListener('click', calculate);
 
 let clearButton = document.querySelector(".clear-btn");
 clearButton.addEventListener('click', clear);
+
+let decimalButton = document.querySelector(".decimal-btn");
+decimalButton.addEventListener('click', decimalPressed);
