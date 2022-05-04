@@ -76,12 +76,14 @@ function operate(operator, a, b){
 function numberPressed(){
     if (calcDisplay.textContent.trim() == "" || 
         calcDisplay.textContent.trim() == "0" ||
-        opJustPressed){
+        opJustPressed ||
+        eqJustPressed){
         calcDisplay.textContent = this.getAttribute("data-value");
     } else {
         calcDisplay.textContent += this.getAttribute("data-value");
     }
     opJustPressed = false;
+    eqJustPressed = false;
 }
 
 /**
@@ -104,6 +106,7 @@ function operatorPressed(){
     }
 
     op = this.getAttribute("data-value");
+    previousOp[0] = op;
     updateAns();
     opJustPressed = true;
 }
@@ -114,16 +117,24 @@ function operatorPressed(){
  */
 function calculate(){
     let a = ans;
+    let b;
+    let answer;
 
-    if (op && !opJustPressed){
-        updateAns();
-        let b = ans;
-        let answer = operate(op, a, b);
+    if (previousOp.length){
+        if (eqJustPressed && previousOp.length == 2){
+            op = previousOp[0];
+            b = previousOp[1];
+        } else {
+            updateAns();
+            b = ans;
+        }
+        answer = operate(op, a, b);
+        ans = answer;
         calcDisplay.textContent = answer;
         console.log(answer);
+        previousOp = [op, b];
     }
-    op = "";
-    opJustPressed = true;
+    eqJustPressed = true;
 }
 
 /**
@@ -140,7 +151,9 @@ function clear(){
 
 let ans = 0;
 let op = "";
+let previousOp = [];
 let opJustPressed = false;
+let eqJustPressed = false;
 let calcDisplay = document.querySelector(".calculator-display");
 let numberButtons = document.querySelectorAll(".number-btn");
 numberButtons.forEach(btn => btn.addEventListener('click', numberPressed));
