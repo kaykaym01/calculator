@@ -122,6 +122,18 @@ function calculate(){
     console.log(answer);
 }
 
+/**
+ * Clears the current calculated value. Clears the current operation.
+ * Clears the display.
+ */
+function clear(){
+    ans = 0;
+    op = "";
+    opJustPressed = false;
+    calcDisplay.textContent = '\xa0';
+    console.clear();
+}
+
 let ans = 0;
 let op = "";
 let opJustPressed = false;
@@ -134,3 +146,6 @@ operateButtons.forEach(btn => btn.addEventListener('click', operatorPressed));
 
 let equalButton = document.querySelector(".equal-btn");
 equalButton.addEventListener('click', calculate);
+
+let clearButton = document.querySelector(".clear-btn");
+clearButton.addEventListener('click', clear);
