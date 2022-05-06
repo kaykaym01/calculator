@@ -8,11 +8,17 @@ button {
     font-size: 24px;
 }
 
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+}
+
 .calculator {
     background-color: #767474;
     display: flex;
     flex-direction: column;
-    width: 50%;
     margin: auto;
     padding: 10px 10px 20px 10px;
 }
