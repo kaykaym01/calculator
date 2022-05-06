@@ -77,7 +77,7 @@ function operate(operator, a, b){
  * If display has 0 or is empty, number pressed replaces current display text content.
  * If the last pressed button was an operator, number pressed replaces current display text content.
  */
-function numberPressed(){
+function numberPressed(number){
     if (justPressed == "equal") {
         clear();
     }
@@ -92,7 +92,7 @@ function numberPressed(){
         calcDisplay.textContent = "";
     }
 
-    calcDisplay.textContent += this.getAttribute("data-value");
+    calcDisplay.textContent += number;
     justPressed = "number";
 }
 
@@ -110,14 +110,13 @@ function updateAns(){
  * to empty string. If an operator was just pressed previously, op is replaced
  * with value of new operation.
  */
-function operatorPressed(){
+function operatorPressed(operator){
     // only show updated calculation if previous button was not an operator or equal
     if (op && justPressed == "number"){
         calculate();
     }
-
-    op = this.getAttribute("data-value");
-    previousOp[0] = op;
+    op = operator;
+    previousOp[0] = operator;
     updateAns();
     justPressed = "operator";
 }
@@ -202,17 +201,48 @@ function toggleSign(){
         calcDisplay.textContent = "-" + calcDisplay.textContent;
     }
 }
+/**
+ * Listener for keyboard input for calculator
+ */
+function keyPressed(e){
+    key = e.key;
 
+    let isNumber = /^\d$/.test(key);
+    let isOperator = /[+\-*\/]/.test(key);
+
+    if (isNumber){
+        numberPressed(key);
+    } else if (isOperator) {
+        operatorPressed(key);
+    } else if (key == "=" || key == "Enter"){
+        key="="
+        equalPressed();
+    } else if (key == "."){
+        decimalPressed();
+    }
+
+    let selection = document.querySelector(`.calculator-btn[data-value='${key}']`);
+    if (selection){
+        selection.classList.add('calculator-btn-clicked');
+    }
+
+}
+
+/**
+ * Some initial variables used in calculator operations
+ */
 let ans = 0;
 let op = "";
 let previousOp = [];
 let justPressed = "";
+
+
 let calcDisplay = document.querySelector(".calculator-display");
 let numberButtons = document.querySelectorAll(".number-btn");
-numberButtons.forEach(btn => btn.addEventListener('click', numberPressed));
+numberButtons.forEach(btn => btn.addEventListener('click', () => numberPressed(btn.getAttribute("data-value"))));
 
 let operateButtons = document.querySelectorAll(".operate-btn");
-operateButtons.forEach(btn => btn.addEventListener('click', operatorPressed));
+operateButtons.forEach(btn => btn.addEventListener('click', () => operatorPressed(btn.getAttribute("data-value"))));
 
 let equalButton = document.querySelector(".equal-btn");
 equalButton.addEventListener('click', equalPressed);
@@ -225,3 +255,14 @@ decimalButton.addEventListener('click', decimalPressed);
 
 let signButton = document.querySelector(".sign-btn");
 signButton.addEventListener('click', toggleSign);
+
+// Add keyboard functionality
+window.addEventListener('keydown', keyPressed);
+
+const calcBtns = document.querySelectorAll('.calculator-btn');
+calcBtns.forEach(btn => btn.addEventListener('transitionend', removeTransition));
+
+function removeTransition(e){
+    if (e.propertyName !== 'transform') return;
+    this.classList.remove('calculator-btn-clicked');
+}
