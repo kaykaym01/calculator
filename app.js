@@ -101,7 +101,6 @@ function numberPressed(number){
  */
 function updateAns(){
     ans = parseFloat(calcDisplay.textContent);
-    console.log(ans);
 }
 
 /**
@@ -154,7 +153,6 @@ function calculate(){
         } else {
             calcDisplay.textContent = parseFloat(answer).toPrecision(8)/1;
         }
-        console.log(answer);
         previousOp = [op, b];
     }
 }
