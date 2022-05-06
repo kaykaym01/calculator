@@ -236,32 +236,39 @@ let op = "";
 let previousOp = [];
 let justPressed = "";
 
-
+// calculator display
 let calcDisplay = document.querySelector(".calculator-display");
+
+// number buttons
 let numberButtons = document.querySelectorAll(".number-btn");
 numberButtons.forEach(btn => btn.addEventListener('click', () => numberPressed(btn.getAttribute("data-value"))));
 
+// operator buttons
 let operateButtons = document.querySelectorAll(".operate-btn");
 operateButtons.forEach(btn => btn.addEventListener('click', () => operatorPressed(btn.getAttribute("data-value"))));
 
+// equal button
 let equalButton = document.querySelector(".equal-btn");
 equalButton.addEventListener('click', equalPressed);
 
+// clear button
 let clearButton = document.querySelector(".clear-btn");
 clearButton.addEventListener('click', clear);
 
+// decimal button
 let decimalButton = document.querySelector(".decimal-btn");
 decimalButton.addEventListener('click', decimalPressed);
 
+// sign button
 let signButton = document.querySelector(".sign-btn");
 signButton.addEventListener('click', toggleSign);
 
-// Add keyboard functionality
+// Add keyboard functionality 
 window.addEventListener('keydown', keyPressed);
 
+// transition for calculator buttons
 const calcBtns = document.querySelectorAll('.calculator-btn');
 calcBtns.forEach(btn => btn.addEventListener('transitionend', removeTransition));
-
 function removeTransition(e){
     if (e.propertyName !== 'transform') return;
     this.classList.remove('calculator-btn-clicked');
