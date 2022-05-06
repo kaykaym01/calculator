@@ -78,9 +78,18 @@ function operate(operator, a, b){
  * If the last pressed button was an operator, number pressed replaces current display text content.
  */
 function numberPressed(){
-    if (justPressed == "number" || justPressed == "decimal"){
+    if (calcDisplay.textContent == "-0"){
+        calcDisplay.textContent = "-";
+    }
+
+    if (justPressed == "equal") {
+        clear();
+    }
+
+    if (justPressed == "number" || justPressed == "decimal" || justPressed == "sign"){
         calcDisplay.textContent += this.getAttribute("data-value");
-    } else {
+    }
+    else {
         calcDisplay.textContent = this.getAttribute("data-value");
     }
     justPressed = "number";
@@ -102,7 +111,7 @@ function updateAns(){
  */
 function operatorPressed(){
     // only show updated calculation if previous button was not an operator or equal
-    if (op && justPressed != "operator" && justPressed != "equal"){
+    if (op && justPressed == "number"){
         calculate();
     }
 
@@ -112,9 +121,14 @@ function operatorPressed(){
     justPressed = "operator";
 }
 
+function equalPressed(){
+    calculate();
+    justPressed = "equal";
+}
+
 /**
- * When equal button is pressed, calculator does calculation and updates display
- * with answer.
+ * Runs calculate with ans, selected operation, and whatever
+ * is in the display
  */
 function calculate(){
     let a = ans;
@@ -124,7 +138,9 @@ function calculate(){
     // only calculate if operator is set
     if (previousOp.length){
         // repeatedly pressing equals will re-do previous operation
-        if (justPressed == "equal" && previousOp.length == 2){
+        if ((justPressed == "equal" || justPressed == "sign") && previousOp.length == 2){
+            updateAns();
+            a=ans;
             op = previousOp[0];
             b = previousOp[1];
         } else {
@@ -141,20 +157,33 @@ function calculate(){
         console.log(answer);
         previousOp = [op, b];
     }
-    justPressed = "equal";
+}
+
+/**
+ * 
+ */
+function clear(){
+    resetCalculator();
+    resetDisplay();
 }
 
 /**
  * Clears the current calculated value. Clears the current operation.
  * Clears the display.
  */
-function clear(){
+function resetCalculator(){
     ans = 0;
     op = "";
     previousOp = [];
+    justPressed = "";
+}
+
+/**
+ * 
+ */
+function resetDisplay(){
     calcDisplay.textContent = '0';
     console.clear();
-    justPressed = "";
 }
 
 /**
@@ -173,12 +202,25 @@ function decimalPressed(){
     justPressed = "decimal";
 }
 
+/**
+ * Function nto toggle positive and negative sign 
+ */
+function toggleSign(){
+    if (justPressed == "operator"){
+        calcDisplay.textContent = "0";
+    }
+    if (calcDisplay.textContent.includes("-")){
+        calcDisplay.textContent  = calcDisplay.textContent.substring(1);
+    } else{
+        calcDisplay.textContent = "-" + calcDisplay.textContent;
+    }
+    justPressed = "sign";
+}
+
 let ans = 0;
 let op = "";
 let previousOp = [];
 let justPressed = "";
-let opJustPressed = false;
-let eqJustPressed = false;
 let calcDisplay = document.querySelector(".calculator-display");
 let numberButtons = document.querySelectorAll(".number-btn");
 numberButtons.forEach(btn => btn.addEventListener('click', numberPressed));
@@ -187,10 +229,13 @@ let operateButtons = document.querySelectorAll(".operate-btn");
 operateButtons.forEach(btn => btn.addEventListener('click', operatorPressed));
 
 let equalButton = document.querySelector(".equal-btn");
-equalButton.addEventListener('click', calculate);
+equalButton.addEventListener('click', equalPressed);
 
 let clearButton = document.querySelector(".clear-btn");
 clearButton.addEventListener('click', clear);
 
 let decimalButton = document.querySelector(".decimal-btn");
 decimalButton.addEventListener('click', decimalPressed);
+
+let signButton = document.querySelector(".sign-btn");
+signButton.addEventListener('click', toggleSign);
